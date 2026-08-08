@@ -59,15 +59,15 @@ jobs:
           # redistributing it. This repo is documentation; nothing binary or
           # SDK-named belongs in it.
           if find . -path ./.git -prune -o -type f \
-               \( -name '*.aar' -o -name '*.apk' -o -name '*.jar' \
-                  -o -name '*.keystore' -o -name '*.so' \) -print | grep -q .; then
+               \( -name '*.aar' -o -name '*.apk' -o -name '*.jar' -o -name '*.aab' \
+                  -o -name '*.zip' -o -name '*.keystore' -o -name '*.so' \) -print | grep -q .; then
             echo "::error::binary artifact committed; this repository is documentation only"
             find . -path ./.git -prune -o -type f \
-              \( -name '*.aar' -o -name '*.apk' -o -name '*.jar' \
-                 -o -name '*.keystore' -o -name '*.so' \) -print
+              \( -name '*.aar' -o -name '*.apk' -o -name '*.jar' -o -name '*.aab' \
+                 -o -name '*.zip' -o -name '*.keystore' -o -name '*.so' \) -print
             exit 1
           fi
-          if git ls-files | grep -qiE 'atakplugintests|android_keystore|atak-gradle-takdev|plugintemplate/'; then
+          if git ls-files | grep -qiE 'atakplugintests|android_keystore|atak-gradle-takdev|plugintemplate|^main\.jar$'; then
             echo "::error::a path names SDK material"
             exit 1
           fi
