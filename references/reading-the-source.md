@@ -70,15 +70,19 @@ deliberately, not a shortcut to take quietly.
 Keep it separate from anything you publish. Do not vendor it into a plugin
 repository "for reference"; a clone on disk is enough.
 
-## This replaces guessing at the dex
+## It also beats probing at runtime
 
-An earlier instinct here was to infer ATAK's internals from the shipping APK —
-obfuscated class names, methods matched by shape. That approach found
-`dispatchStyleRegistered`, a listener notifier, and called it as if it were a
-registry: it reported success and changed nothing, which is worse than
-failing.
+Before reaching for the source, the instinct here was to find ATAK's API by
+reflection — walking `getDeclaredMethods()` on classes already loaded in ATAK's
+process and matching one by its shape. That is legitimate: it inspects a live
+object graph in a process you are running inside, and nothing is decompiled,
+disassembled or reverse engineered.
 
-It is also the thing the SDK licence forbids. Reverse engineering is both
-prohibited and unnecessary when the source is published. If a fact about ATAK
-cannot be established from the source or from observed runtime behaviour, it
-should not go in this skill.
+It is also a poor way to learn an API. Matching `(File, String, String)` found
+`dispatchStyleRegistered` — a listener notifier — and called it as though it
+were a registry. It reported success and changed nothing, which is worse than
+failing, because a false positive silences the very question you were asking.
+
+A signature match tells you a method exists with those types. Only the source
+tells you what it is for. Reflection is for reaching an API you already
+understand; the source is for understanding it.

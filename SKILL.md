@@ -9,37 +9,48 @@ trigger: /atak-plugin
 Measured against **ATAK-CIV 5.8.0.1** and its SDK on an Android 14 emulator.
 Re-verify version-specific claims on a different ATAK release.
 
-## Read the source first
+## What you have
 
-ATAK-CIV's source is published under GPL-3.0 — ~4,200 Java files, the whole map
-engine — on tak.gov with a permissioned account, and publicly on a delay at
-`github.com/TAK-Product-Center/atak-civ`. Most questions about its behaviour are a `grep` away, and
-answering them by experiment instead routinely costs hours.
+Know the tools before reaching for an experiment. Most questions here are
+already answered by one of these.
 
-The example that earns this its place: `MapController.zoomTo(double)` takes map
-*scale*, not resolution. Passing a plausible "30 metres per pixel" asks for
-something extremely zoomed in, every tile request misses, and the map renders
-blank with no error anywhere. `AtakMapView.mapResolutionAsMapScale()` converts;
-both facts are one grep each.
+| | What it is | Use it for |
+| --- | --- | --- |
+| **The published source** | ATAK-CIV under GPL-3.0, ~4,200 Java files including the map engine. tak.gov (current, permissioned) or `github.com/TAK-Product-Center/atak-civ` (public, delayed) | **Read this first.** Exact signatures and, more importantly, what they mean |
+| **The SDK** | `atak.apk`, keystore, `main.jar`, espresso, samples. Licensed, mounted at `$ATAK_SDK`, never committed | Building, and the developer ATAK that will load your plugin |
+| **The dev container** | `doctor`, `deploy`, `instrument` on `PATH` | Run `doctor` first, always |
+| **An emulator** | `google_apis` image — never `aosp_atd` | Everything, unattended |
+| **This skill** | A measurement record, not a manual | Correct it when it misleads you — see below |
 
-Reading is not copying — GPL-3.0 is copyleft. See
-`references/reading-the-source.md`.
+**Read the source before designing an experiment.**
+`MapController.zoomTo(double)` takes ATAK's map *scale*, not resolution. A
+plausible "30 metres per pixel" asks for something extremely zoomed in: every
+tile request misses and the map renders blank with no error anywhere.
+`AtakMapView.mapResolutionAsMapScale()` converts. Both facts are one grep each;
+finding them by experiment cost hours.
+
+**What you may do:** read the GPL-3.0 source, run ATAK and observe it, list
+archive entries, reflect at runtime over loaded classes, and ship plugins
+derived from the SDK. **What you may not:** decompile or disassemble the APK,
+SDK jars or AARs, or republish SDK files. `references/licensing.md` quotes the
+text and links every copy of it.
 
 ## Four facts that cost the most time
 
 Each produces a failure that looks like something else.
 
 1. **ATAK compares a plugin's signing certificate against its own.** A plugin
-   signed with the SDK's `android_keystore` will not load into the release ATAK
-   from tak.gov or the Play Store. Install the `atak.apk` at the root of the SDK
-   instead — same version, same key, red `DEVELOPER BUILD` watermark.
-2. **Installing the APK is not enough.** A sideloaded plugin becomes visible to
-   the plugin manager only when a copy is in
-   `/sdcard/atak/support/apks/sideloaded/` **and** you run Sync Packages.
-3. **Loading is a separate action from installing.** After syncing the row says
+   signed with the SDK's keystore will not load into the release ATAK. Install
+   `$ATAK_SDK/atak.apk` — same version, same key, red `DEVELOPER BUILD`
+   watermark. The manager says "Incompatible", which sounds like a version
+   problem and is not.
+2. **Installing the APK is not enough.** It becomes visible to the plugin
+   manager only when a copy is in `/sdcard/atak/support/apks/sideloaded/`
+   **and** you run Sync Packages.
+3. **Loading is separate from installing.** After syncing the row says
    `Not loaded`; tap it and choose **Load**.
-4. **The `com.atakmap.app.component` activity in the manifest is what makes the
-   plugin discoverable.** Remove it and the plugin is invisible, with no error.
+4. **The `com.atakmap.app.component` activity makes the plugin discoverable.**
+   Remove it and the plugin is invisible, with no error.
 
 ## First move on any "it does not work"
 
@@ -72,24 +83,20 @@ fails only after release. See `references/language.md`.
 ## The loop
 
 ```bash
-cp -r "$ATAK_SDK/samples/plugintemplate" workspace/MyPlugin
-cd workspace/MyPlugin && cp template.local.properties local.properties
-# local.properties: sdk.dir=/opt/android-sdk
-#                   sdk.path=/opt/atak-sdk
-#                   takdev.plugin=/opt/atak-sdk/atak-gradle-takdev.jar
+cp -r "$ATAK_SDK/samples/plugintemplate" <plugins-dir>/MyPlugin
+cd MyPlugin && cp template.local.properties local.properties
+#   sdk.dir=/opt/android-sdk   sdk.path=/opt/atak-sdk
+#   takdev.plugin=/opt/atak-sdk/atak-gradle-takdev.jar
+deploy MyPlugin      # then on device: Tools -> Plugins -> sync -> row -> Load
 ```
 
-Build, install, stage for sideload, then on device:
-**Tools → Plugins → sync → tap row → Load**.
-
-**Rename the template before writing any code.** Renaming later is strictly
-worse. Change together: `namespace` in `app/build.gradle`, the java package
-dirs and `IPlugin` class, `impl=` in `assets/plugin.xml`, `app_name`/`app_desc`
-in `strings.xml`, and `rootProject.name` in `settings.gradle` (which drives the
-APK name and the proguard `-repackageclasses` line). Then `adb uninstall` the
-old package **and** delete its APK from the sideload folder, or Sync Packages
-lists a phantom product and ATAK reports a signature failure for a package that
-no longer exists.
+**Rename the template before writing any code.** Together: `namespace`, the
+java package dirs and `IPlugin` class, `impl=` in `assets/plugin.xml`,
+`app_name`/`app_desc`, and `rootProject.name` (which drives the APK name and
+the proguard `-repackageclasses` line). Then `adb uninstall` the old package
+**and** delete its APK from the sideload folder, or Sync Packages lists a
+phantom product and reports a signature failure for a package that no longer
+exists.
 
 ## Repo layout and the licence boundary
 
@@ -111,7 +118,8 @@ the script in `references/project-setup.md`.
 | `references/shipping.md` | Preparing a Third Party Pipeline submission. |
 | `references/atak-behaviour.md` | Designing around how ATAK treats maps and imports. Explains behaviour that looks like bugs. |
 | `references/android-gotchas.md` | Anything that works on the JVM and fails on device. |
-| `references/reading-the-source.md` | **Where ATAK's source is and how to search it.** Read before designing any experiment about ATAK's behaviour. |
+| `references/reading-the-source.md` | **Where the source is and how to search it.** Before any experiment. |
+| `references/licensing.md` | What the TAK and GPL-3.0 licences actually permit, quoted. |
 | `references/project-setup.md` | Repo layout, and the SDK files that must never be committed. |
 | `references/language.md` | Choosing Java or Kotlin, and what a Kotlin plugin must carry. |
 | `references/self-improvement.md` | **The working loop, and how to correct this skill when it misleads you.** Read it the first time something here turns out to be wrong. |
@@ -119,37 +127,27 @@ the script in `references/project-setup.md`.
 ## When this skill is wrong, fix it before you finish
 
 Everything here was measured against one ATAK version on one machine on one
-day. Some of it is already wrong. **When the device and this skill disagree,
-the device wins and this skill is defective.**
+day, and some of it is already wrong. **When the device and this skill
+disagree, the device wins and this skill is defective.**
 
-The working loop is six steps — orient (`doctor`), specify (red test), build,
-verify *on device*, record the evidence, **correct the skill**. The last step
-is the one that makes the next session cheaper, and the only one anybody skips.
-
-Correct it whenever a claim here turned out false, a diagnosis cost more than
-about half an hour, or you needed a fact that was not here. Do it as a pull
-request rather than a push — a wrong claim here is believed by every future
-session:
+Correct it whenever a claim turned out false, a diagnosis cost more than about
+half an hour, or you needed a fact that was not here. Raise it as a pull
+request, not a push — a wrong claim here is believed by every future session:
 
 ```bash
 cd ~/.claude/skills/atak-plugin      # the installed skill is a git checkout
-# ...edit...
 bin/propose finding "Coverage does not extend until re-registration"
 ```
 
-One finding per PR, measured with the method in the body, versions stated.
-`references/self-improvement.md` has the full protocol; `CONTRIBUTING.md` has
-the acceptance criteria and definition of done.
+One finding per PR, measured, with the method in the body.
+`references/self-improvement.md` has the loop; `CONTRIBUTING.md` has the
+acceptance criteria.
 
 ## Rules of thumb
 
-- **Verify against ATAK's own classes, not your own.** For anything ATAK has to
-  accept, assert through the class ATAK uses (e.g. `MobacMapSourceFactory` for
-  map sources). A test using only your parser goes green while shipping files
-  ATAK refuses.
-- **Anything that only runs on device must be tested on device.** Android's
-  platform classes differ from the JVM's in ways that fail silently — see
-  `references/android-gotchas.md`.
-- **Use a `google_apis` emulator image.** `aosp_atd` renders a black
-  framebuffer while `uiautomator` still reports a full view tree, so a UI
-  script "taps" successfully and changes nothing.
+- **Verify against ATAK's own classes, not your own.** For anything ATAK must
+  accept, assert through the class ATAK uses. A test using only your parser
+  goes green while shipping files ATAK refuses.
+- **Anything that only runs on device is only proven on device**, and anything
+  a user sees is only proven by looking at it.
+- **`am instrument` exits 0 even when tests fail.** Parse the output.
