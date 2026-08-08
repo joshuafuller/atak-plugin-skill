@@ -108,8 +108,8 @@ reviewer who cannot confirm one should ask rather than assume.
 6. **No ATAK SDK material.** No code, resources, gradle scripts or binaries
    from the SDK. The TAK licence forbids redistributing it, and this repository
    is meant to be publishable.
-7. **No project-specific decisions.** "Map Room stores one MBTiles archive"
-   belongs in that project's ADRs. "ATAK reads streaming descriptors from
+7. **No project-specific decisions.** "this plugin stores one MBTiles archive"
+   belongs in that plugin's own ADRs. "ATAK reads streaming descriptors from
    `imagery/mobile/mapsources/`" belongs here.
 8. **The commit message carries the measurement**, so the git history remains
    the provenance for every claim in the skill.

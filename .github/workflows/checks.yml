@@ -1,0 +1,80 @@
+# Checks the rules in CONTRIBUTING.md, so they are enforced rather than hoped
+# for. Deliberately has no secrets and no write permissions: a workflow is
+# code, and a pull request that can change it must not be able to use it.
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: SKILL.md stays readable end to end
+        run: |
+          # Progressive disclosure is the design. If this fails, something in
+          # SKILL.md has stopped being load-bearing — move it to references/.
+          limit=150
+          actual=$(wc -l < SKILL.md)
+          echo "SKILL.md is $actual lines (limit $limit)"
+          if [ "$actual" -gt "$limit" ]; then
+            echo "::error file=SKILL.md::$actual lines exceeds the $limit-line budget; move detail into references/"
+            exit 1
+          fi
+
+      - name: Frontmatter is intact
+        run: |
+          head -1 SKILL.md | grep -qx -- '---' \
+            || { echo "::error file=SKILL.md::missing frontmatter"; exit 1; }
+          grep -qE '^name: ' SKILL.md \
+            || { echo "::error file=SKILL.md::frontmatter has no name"; exit 1; }
+          grep -qE '^description: ' SKILL.md \
+            || { echo "::error file=SKILL.md::frontmatter has no description"; exit 1; }
+
+      - name: Every relative link resolves
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            grep -oE '\]\(([^)]+)\)' "$f" | sed -E 's#\]\((.*)\)#\1#' \
+            | grep -vE '^(https?:|#|mailto:)' | while read -r link; do
+                target="$(dirname "$f")/${link%%#*}"
+                if [ ! -e "$target" ]; then
+                  echo "::error file=$f::broken link -> $link"
+                  exit 1
+                fi
+              done || fail=1
+          done < <(find . -name '*.md' -not -path './.git/*')
+          exit $fail
+
+      - name: No ATAK SDK material
+        run: |
+          # The licence permits deriving applications from the SDK and forbids
+          # redistributing it. This repo is documentation; nothing binary or
+          # SDK-named belongs in it.
+          if find . -path ./.git -prune -o -type f \
+               \( -name '*.aar' -o -name '*.apk' -o -name '*.jar' \
+                  -o -name '*.keystore' -o -name '*.so' \) -print | grep -q .; then
+            echo "::error::binary artifact committed; this repository is documentation only"
+            find . -path ./.git -prune -o -type f \
+              \( -name '*.aar' -o -name '*.apk' -o -name '*.jar' \
+                 -o -name '*.keystore' -o -name '*.so' \) -print
+            exit 1
+          fi
+          if git ls-files | grep -qiE 'atakplugintests|android_keystore|atak-gradle-takdev|plugintemplate/'; then
+            echo "::error::a path names SDK material"
+            exit 1
+          fi
+
+      - name: Executable scripts are shellchecked
+        run: |
+          if [ -d bin ]; then
+            sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+            shellcheck -S warning bin/* || exit 1
+          fi

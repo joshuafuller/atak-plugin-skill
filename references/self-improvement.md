@@ -160,8 +160,8 @@ weaker one either blocks the stronger or rides in unexamined.
 
 - Do not add advice you have not tested. The value of this skill is that its
   claims were measured; one invented paragraph makes readers doubt all of them.
-- Do not record project-specific decisions here. "Map Room uses one MBTiles
-  archive" belongs in that project's ADRs. "ATAK reads MBTiles from
+- Do not record project-specific decisions here. "a plugin uses one MBTiles
+  archive" belongs in that plugin's own ADRs. "ATAK reads MBTiles from
   `imagery/mobile/mapsources/`" belongs here.
 - Do not turn a specific finding into a general rule on one observation.
 

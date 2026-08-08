@@ -80,52 +80,19 @@ old package **and** delete its APK from the sideload folder, or Sync Packages
 lists a phantom product and ATAK reports a signature failure for a package that
 no longer exists.
 
-## Repo layout
+## Repo layout and the licence boundary
 
-The container is one repository; **each plugin is its own, and none of them
-nests inside another.** Plugin repos sit side by side in a directory the
-container mounts at `/work`, so several people — or several agents — can work
-on different plugins, or different `git worktree`s of one plugin, at once.
+Each plugin is its own repository, and none nests inside another; the container
+mounts the parent directory so several agents can work at once. Only the device
+is exclusive — serialise device work, parallelise the rest.
 
-```
-PLUGINS_DIR/               ->  /work
-  atak-plugin-maproom/
-  atak-plugin-weather/
-  my-plugin.worktrees/fix-resume/
-```
+**Settle the licence boundary before your first commit.** The TAK licence
+permits deriving applications from the SDK and forbids redistributing it, and
+scaffolding from the template copies SDK files into your tree — one real plugin
+carried 45 of them. History is what gets published, so a private repo does not
+protect you, and the fix afterwards is a history rewrite.
 
-The container's helper scripts (`doctor`, `deploy`, `instrument`, `adb-bridge`)
-belong to the container, are mounted read-only at `/opt/tak-bin`, and are on
-`PATH`. Run `doctor` first, always: it checks the SDK layout, toolchain, adb
-bridge, emulator image, and whether the ATAK on the device will accept plugins
-signed with your keystore.
-
-If a plugin did end up nested inside another repo, `git subtree split
---prefix=<path>` extracts it with its history intact.
-
-## Licence boundary — decide this before the first commit, not before the first push
-
-The TAK licence permits deriving applications from the SDK and **forbids
-copying, publishing or distributing the SDK itself**. Scaffolding a plugin from
-`samples/plugintemplate` copies SDK files into your working tree, and if you
-commit them, your repository now contains SDK material.
-
-This is easy to miss and expensive to undo. A plugin scaffolded from the
-template can carry dozens of byte-identical SDK files — the gradle scripts,
-sample resources, the espresso archives, the typst user-manual scaffolding —
-and history is what gets published later, so a private repo does not protect
-you. Removing them afterwards means rewriting every commit.
-
-Check what you are about to commit:
-
-```bash
-for f in $(git ls-files); do
-  m=$(find "$ATAK_SDK" -name "$(basename "$f")" -type f | head -1)
-  [ -n "$m" ] && cmp -s "$f" "$m" && echo "SDK material: $f"
-done
-```
-
-Gitignore anything that matches and copy it from `$ATAK_SDK` at build time.
+Both, with the check to run: `references/project-setup.md`.
 
 ## References — read the one you need
 
@@ -137,6 +104,7 @@ Gitignore anything that matches and copy it from `$ATAK_SDK` at build time.
 | `references/shipping.md` | Preparing a Third Party Pipeline submission. |
 | `references/atak-behaviour.md` | Designing around how ATAK treats maps and imports. Explains behaviour that looks like bugs. |
 | `references/android-gotchas.md` | Anything that works on the JVM and fails on device. |
+| `references/project-setup.md` | Repo layout, and the SDK files that must never be committed. |
 | `references/language.md` | Choosing Java or Kotlin, and what a Kotlin plugin must carry. |
 | `references/self-improvement.md` | **The working loop, and how to correct this skill when it misleads you.** Read it the first time something here turns out to be wrong. |
 
