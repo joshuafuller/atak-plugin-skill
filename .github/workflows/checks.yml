@@ -74,7 +74,7 @@ jobs:
 
       - name: Executable scripts are shellchecked
         run: |
-          if [ -d bin ]; then
+          if [ -d scripts ]; then
             sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
-            shellcheck -S warning bin/* || exit 1
+            shellcheck -S warning scripts/* || exit 1
           fi

@@ -11,6 +11,20 @@ Split by what the code touches.
 The template ships an `ExampleTest` but **no junit dependency**, so add
 `testImplementation 'junit:junit:4.13.2'` before the first unit test compiles.
 
+## Contents
+
+- [Wiring the Espresso framework](#wiring-the-espresso-framework)
+- [The `_modApk` trap](#the-modapk-trap)
+- [Running without Gradle's UTP](#running-without-gradles-utp)
+- [Test class shape](#test-class-shape)
+- [Two harness quirks](#two-harness-quirks)
+- [The harness mutates ATAK's preferences](#the-harness-mutates-ataks-preferences)
+- [Espresso against a plugin pane](#espresso-against-a-plugin-pane)
+- [Assert through ATAK, not through your own code](#assert-through-atak-not-through-your-own-code)
+- [Fail at the real cause](#fail-at-the-real-cause)
+- [Flakiness](#flakiness)
+- [Debugging](#debugging)
+
 ## Wiring the Espresso framework
 
 Copy `espresso/` from the SDK so it sits beside `app/`. Then rename the AAR:

@@ -1,5 +1,20 @@
 # Build environment, and the two things that hang
 
+The tooling this skill assumes — a pinned toolchain, `doctor`, `deploy`,
+`instrument`, and an `AGENTS.md` describing how to run the whole loop without a
+human — lives in <https://github.com/joshuafuller/atak-plugin-dev>.
+**This skill carries the knowledge; that repo carries the tools.**
+
+## Contents
+
+- [What a build needs](#what-a-build-needs)
+- [Hang 1: `connectedAndroidTest` sits for ten minutes](#hang-1-connectedandroidtest-sits-for-ten-minutes)
+- [Hang 2: ATAK's first-run permission walkthrough](#hang-2-ataks-first-run-permission-walkthrough)
+- [Swapping release ATAK for the developer build](#swapping-release-atak-for-the-developer-build)
+- [Container portability](#container-portability)
+- [Other build-time noise that is not a problem](#other-build-time-noise-that-is-not-a-problem)
+- [Emulator states that look like build failures](#emulator-states-that-look-like-build-failures)
+
 ## What a build needs
 
 | | |

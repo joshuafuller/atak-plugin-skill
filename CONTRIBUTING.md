@@ -19,10 +19,10 @@ measured.
 ```bash
 cd ~/.claude/skills/atak-plugin        # the installed skill is a checkout
 # ...edit...
-bin/propose finding "Coverage does not extend until re-registration"
+scripts/propose finding "Coverage does not extend until re-registration"
 ```
 
-`bin/propose` branches, commits, pushes and opens the PR with the template
+`scripts/propose` branches, commits, pushes and opens the PR with the template
 filled in. It refuses to run against `main`, refuses an empty diff, and refuses
 a title that does not state a claim.
 

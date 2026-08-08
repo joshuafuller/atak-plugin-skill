@@ -8,6 +8,14 @@ device wins and **the skill is defective until you fix it**. Fixing it is part
 of the task you are already doing, not a separate chore for later — later never
 comes, and the next agent pays the same cost you just paid.
 
+## Contents
+
+- [The loop](#the-loop)
+- [How to write a correction](#how-to-write-a-correction)
+- [Propose it as a pull request — do not push to main](#propose-it-as-a-pull-request--do-not-push-to-main)
+- [What not to do](#what-not-to-do)
+- [The test of whether this is working](#the-test-of-whether-this-is-working)
+
 ## The loop
 
 ```

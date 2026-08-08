@@ -1,7 +1,6 @@
 ---
 name: atak-plugin
 description: Use when building, debugging, testing, or shipping an ATAK (Android Team Awareness Kit) plugin - scaffolding from the SDK template, getting it to actually load on a device, running instrumented tests inside ATAK, and preparing a submission to TAK's third-party signing pipeline. Triggers on ATAK plugin work, "plugin will NOT load", "signature mismatch", plugin manager Incompatible, takdev, plugintemplate, or connectedAndroidTest hanging.
-trigger: /atak-plugin
 ---
 
 # ATAK plugin development
@@ -18,7 +17,7 @@ answered by one of them.
 | --- | --- | --- |
 | **The published source** | ATAK-CIV under GPL-3.0, ~4,200 Java files including the map engine. tak.gov (current, permissioned) or `github.com/TAK-Product-Center/atak-civ` (public, delayed) | **Read this first.** Exact signatures and, more importantly, what they mean |
 | **The SDK** | `atak.apk`, keystore, `main.jar`, espresso, samples. Licensed, mounted at `$ATAK_SDK`, never committed | Building, and the developer ATAK that will load your plugin |
-| **The dev container** | `doctor`, `deploy`, `instrument` on `PATH` | Run `doctor` first, always |
+| **The dev container** | `github.com/joshuafuller/atak-plugin-dev` — pinned toolchain, `doctor`, `deploy`, `instrument` on `PATH`, and an `AGENTS.md` for unattended runs | Run `doctor` first, always. The tooling lives there, not here |
 | **An emulator** | `google_apis` image — never `aosp_atd` | Everything, unattended |
 | **This skill** | A measurement record, not a manual | Correct it when it misleads you |
 
@@ -134,7 +133,7 @@ request, not a push — a wrong claim here is believed by every future session:
 
 ```bash
 cd ~/.claude/skills/atak-plugin      # the installed skill is a git checkout
-bin/propose finding "Coverage does not extend until re-registration"
+scripts/propose finding "Coverage does not extend until re-registration"
 ```
 
 One finding per PR, measured, method in the body.
