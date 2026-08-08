@@ -18,10 +18,11 @@ answered by one of them.
 | **The published source** | ATAK-CIV under GPL-3.0, ~4,200 Java files including the map engine. tak.gov (current, permissioned) or `github.com/TAK-Product-Center/atak-civ` (public, delayed) | **Read this first.** Exact signatures and, more importantly, what they mean |
 | **The SDK** | `atak.apk`, keystore, `main.jar`, espresso, samples. Licensed, mounted at `$ATAK_SDK`, never committed | Building, and the developer ATAK that will load your plugin |
 | **The dev container** | `github.com/joshuafuller/atak-plugin-dev` — pinned toolchain, `doctor`, `deploy`, `instrument` on `PATH`, and an `AGENTS.md` for unattended runs | Run `doctor` first, always. The tooling lives there, not here |
-| **An emulator** | `google_apis` image — never `aosp_atd` | Everything, unattended |
-| **This skill** | A measurement record, not a manual | Correct it when it misleads you |
+| **An emulator** | `google_apis`, never `aosp_atd` | Everything, unattended |
+| **This skill** | A measurement record, not a manual | Correct it when it misleads |
 
-**Read the source before designing an experiment.**
+**Plan first, and design the loop that tells you when you are wrong** —
+`references/agent-sdlc.md`. **Read the source before designing an experiment.**
 `MapController.zoomTo(double)` takes ATAK's map *scale*, not resolution. A
 plausible "30 metres per pixel" asks for something extremely zoomed in: every
 tile request misses and the map renders blank, with no error anywhere.
@@ -29,10 +30,9 @@ tile request misses and the map renders blank, with no error anywhere.
 it by experiment cost hours.
 
 **Permitted:** reading the GPL-3.0 source, observing ATAK at runtime, listing
-archive entries, reflection over loaded classes, shipping plugins derived from
-the SDK. **Not permitted:** decompiling or disassembling the APK, SDK jars or
-AARs; republishing SDK files. `references/licensing.md` quotes both licences
-and links every copy.
+archive entries, reflection over loaded classes, shipping SDK-derived plugins.
+**Not permitted:** decompiling the APK, SDK jars or AARs; republishing SDK
+files. `references/licensing.md` quotes both licences and links every copy.
 
 ## Four facts that cost the most time
 
@@ -115,6 +115,7 @@ the script in `references/project-setup.md`.
 | `references/shipping.md` | Preparing a Third Party Pipeline submission. |
 | `references/atak-behaviour.md` | Designing around how ATAK treats maps and imports. Explains behaviour that looks like bugs. |
 | `references/android-gotchas.md` | Anything that works on the JVM and fails on device. |
+| `references/agent-sdlc.md` | Planning, spikes, Iron Law, git and agent hooks, loop engineering. |
 | `references/reading-the-source.md` | **Where the source is and how to search it.** Before any experiment. |
 | `references/licensing.md` | What the TAK and GPL-3.0 licences actually permit, quoted. |
 | `references/project-setup.md` | Repo layout, and the SDK files that must never be committed. |
