@@ -8,7 +8,7 @@ Two places, and the difference matters when a claim is version-specific:
 
 | Source | What you get |
 | --- | --- |
-| <https://tak.gov>, as `atak-civ-client` | The current release, if your account has sufficient permissions |
+| <https://tak.gov>, as `atak-civ` | The current release, if your account has sufficient permissions |
 | <https://github.com/TAK-Product-Center/atak-civ> | A public mirror, released on a delay |
 
 If a behaviour does not match what you read, check which of the two you have
@@ -22,7 +22,7 @@ This should be the first move, not the last.
 Method semantics. A signature tells you the types; the source tells you the
 meaning, and that is usually where the day goes.
 
-A worked example. `MapController.zoomTo(double scale, boolean animate)` looks
+A worked example. `AtakMapController.zoomTo(double scale, boolean animate)` looks
 like it takes a zoom level or a resolution. It takes **map scale**. Passing
 `30.0` — a plausible "30 metres per pixel" — asks for something extremely
 zoomed in. Against an archive holding z4–14, every tile request then misses,

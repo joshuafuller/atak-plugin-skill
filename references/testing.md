@@ -14,7 +14,7 @@ The template ships an `ExampleTest` but **no junit dependency**, so add
 ## Contents
 
 - [Wiring the Espresso framework](#wiring-the-espresso-framework)
-- [The `_modApk` trap](#the-modapk-trap)
+- [The `_modApk` trap](#the-_modapk-trap)
 - [Running without Gradle's UTP](#running-without-gradles-utp)
 - [Test class shape](#test-class-shape)
 - [Two harness quirks](#two-harness-quirks)
