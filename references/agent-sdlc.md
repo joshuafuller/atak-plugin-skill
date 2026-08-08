@@ -1,14 +1,22 @@
-# Agent-driven SDLC, and engineering the loop
+# Agent-driven SDLC, and harness design
 
 An agent that writes good code still fails on a real project, because the hard
-part is knowing whether the code is right and noticing when it is not. That is
-a loop problem, and loops are designed rather than hoped for.
+part is knowing whether the code is right and noticing when it is not. The
+current framing for that is **harness design**: *"Harness design is key to
+performance at the frontier of agentic coding"* (Anthropic, *Harness design for
+long-running application development*, March 2026).
+
+Read [the harness](#the-harness-what-carries-work-across-sessions) first. The
+specification practice below it is still worth having, but the harness is what
+decides whether an agent finishes.
 
 Sources are named inline. Where a claim comes from this project's own
 experience rather than a published practice, it says so.
 
 ## Contents
 
+- [The harness: what carries work across sessions](#the-harness-what-carries-work-across-sessions)
+- [Generator and evaluator](#generator-and-evaluator)
 - [Specify before building](#specify-before-building)
 - [Explore, plan, implement, commit](#explore-plan-implement-commit)
 - [Evidence, not assertion](#evidence-not-assertion)
@@ -20,9 +28,92 @@ experience rather than a published practice, it says so.
 - [Exclusive resources and naming](#exclusive-resources-and-naming)
 - [Feed findings back](#feed-findings-back)
 
+## The harness: what carries work across sessions
+
+**Source: Anthropic, *Effective harnesses for long-running agents*, November
+2025.** The framing is the useful part: an agent works in discrete sessions,
+each starting with no memory of the last. *"Imagine a software project staffed
+by engineers working in shifts, where each new engineer arrives with no memory
+of what happened on the previous shift."*
+
+Compaction alone does not fix this. Two failure modes were observed, and both
+happened on this project before the article was read:
+
+1. **Trying to one-shot it** — running out of context mid-implementation and
+   leaving a feature half-built and undocumented, so the next session guesses.
+2. **Declaring victory** — a later session sees that progress exists and calls
+   the job done.
+
+The remedy is two different prompts and three artifacts.
+
+**An initializer agent** runs once, with a different prompt from every session
+after it, and lays down:
+
+| Artifact | Purpose |
+| --- | --- |
+| `init.sh` | Bring the environment up and run a basic end-to-end check |
+| `claude-progress.txt` | What previous sessions actually did |
+| A first git commit | A recoverable baseline |
+| A **feature list**, in JSON | Every feature, each marked `"passes": false` |
+
+The feature list is the load-bearing piece. For a claude.ai clone it held **over
+200 entries**, each with steps and a `passes` flag. Coding agents may change
+*only* the flag, under instructions as blunt as *"It is unacceptable to remove
+or edit tests because this could lead to missing or buggy functionality."*
+
+The format matters, and this is the kind of detail worth copying exactly: they
+landed on **JSON rather than Markdown**, because *"the model is less likely to
+inappropriately change or overwrite JSON files."*
+
+**A coding agent** then runs every subsequent session and does three things:
+
+- **One feature at a time.** *"This incremental approach turned out to be
+  critical."*
+- **Leaves a clean state** — mergeable to main: no major bugs, orderly,
+  documented. Not a half-finished mess for the next shift.
+- **Commits with descriptive messages and updates the progress file**, which is
+  also what makes `git revert` a usable escape hatch.
+
+**Every session starts by getting its bearings** before touching anything:
+`pwd`, read the git log, read the progress file, read the feature list, run
+`init.sh`, and verify the basics still work. Starting a new feature on top of a
+broken app only makes the breakage harder to find.
+
+**And the failure most relevant to us:** *"Claude's tendency to mark a feature
+as complete without proper testing… would fail to recognise that the feature
+didn't work end-to-end."* The fix was explicit — drive the real UI with
+automation and test as a human would. That is precisely the trap this project
+fell into twice: 72 green tests with nobody watching a download resume, and a
+map that registered cleanly and drew nothing.
+
+## Generator and evaluator
+
+**Source: Anthropic, *Harness design for long-running application development*,
+March 2026.** Taking inspiration from GANs, a **generator agent** produces work
+and a separate **evaluator agent** grades it. The hard part is not the
+generator:
+
+> Building an evaluator that graded outputs reliably — and with taste — meant
+> first developing a set of criteria that could turn subjective judgments like
+> "is this design good?" into concrete, gradable terms.
+
+Two things follow for any project:
+
+- Separate producing from judging. An agent grading its own work reaches for
+  the reading that lets it stop.
+- **The work is in the criteria.** "Polished" is not gradable; "the coverage
+  screen shows a total, and every area is reachable in one tap" is. This is the
+  same requirement as a terminable goal, arrived at from the other direction.
+
+See also *Demystifying evals for AI agents* (January 2026) for evals as a
+discipline rather than a one-off check.
+
 ## Specify before building
 
 **Source: GitHub's Spec Kit and its `spec-driven.md`** (github/spec-kit, MIT).
+Older than the harness work above and narrower in claim — it is about getting
+the specification right, not about getting an agent to finish. Use it for the
+first, and the harness for the second.
 
 Its claim is that specifications stop being scaffolding and become the
 artifact: *"specifications don't serve code — code serves specifications."*

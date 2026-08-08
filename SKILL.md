@@ -21,8 +21,8 @@ answered by one of them.
 | **An emulator** | `google_apis`, never `aosp_atd` | Everything, unattended |
 | **This skill** | A measurement record, not a manual | Correct it when it misleads |
 
-**Plan first, and design the loop that tells you when you are wrong** —
-`references/agent-sdlc.md`. **Read the source before designing an experiment.**
+**Design the harness before the code** — what carries work across sessions, and
+what grades it. `references/agent-sdlc.md`. **Read the source before designing an experiment.**
 `MapController.zoomTo(double)` takes ATAK's map *scale*, not resolution. A
 plausible "30 metres per pixel" asks for something extremely zoomed in: every
 tile request misses and the map renders blank, with no error anywhere.
@@ -115,7 +115,7 @@ the script in `references/project-setup.md`.
 | `references/shipping.md` | Preparing a Third Party Pipeline submission. |
 | `references/atak-behaviour.md` | Designing around how ATAK treats maps and imports. Explains behaviour that looks like bugs. |
 | `references/android-gotchas.md` | Anything that works on the JVM and fails on device. |
-| `references/agent-sdlc.md` | Planning, spikes, Iron Law, git and agent hooks, loop engineering. |
+| `references/agent-sdlc.md` | Harness design, evaluators, specs, Iron Law, hooks, shared devices. |
 | `references/reading-the-source.md` | **Where the source is and how to search it.** Before any experiment. |
 | `references/licensing.md` | What the TAK and GPL-3.0 licences actually permit, quoted. |
 | `references/project-setup.md` | Repo layout, and the SDK files that must never be committed. |
