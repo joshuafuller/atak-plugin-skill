@@ -20,14 +20,14 @@ answered by one of them.
 | **The SDK** | `atak.apk`, keystore, `main.jar`, espresso, samples. Licensed, mounted at `$ATAK_SDK`, never committed | Building, and the developer ATAK that will load your plugin |
 | **The dev container** | `doctor`, `deploy`, `instrument` on `PATH` | Run `doctor` first, always |
 | **An emulator** | `google_apis` image — never `aosp_atd` | Everything, unattended |
-| **This skill** | A measurement record, not a manual | Correct it when it misleads you — see below |
+| **This skill** | A measurement record, not a manual | Correct it when it misleads you |
 
 **Read the source before designing an experiment.**
 `MapController.zoomTo(double)` takes ATAK's map *scale*, not resolution. A
 plausible "30 metres per pixel" asks for something extremely zoomed in: every
-tile request misses and the map renders blank with no error anywhere.
-`AtakMapView.mapResolutionAsMapScale()` converts. Both facts are one grep each;
-finding them by experiment cost hours.
+tile request misses and the map renders blank, with no error anywhere.
+`AtakMapView.mapResolutionAsMapScale()` converts — one grep each, where finding
+it by experiment cost hours.
 
 **Permitted:** reading the GPL-3.0 source, observing ATAK at runtime, listing
 archive entries, reflection over loaded classes, shipping plugins derived from
@@ -139,9 +139,8 @@ cd ~/.claude/skills/atak-plugin      # the installed skill is a git checkout
 bin/propose finding "Coverage does not extend until re-registration"
 ```
 
-One finding per PR, measured, with the method in the body.
-`references/self-improvement.md` has the loop; `CONTRIBUTING.md` has the
-acceptance criteria.
+One finding per PR, measured, method in the body.
+`references/self-improvement.md` has the loop; `CONTRIBUTING.md` the criteria.
 
 ## Rules of thumb
 
