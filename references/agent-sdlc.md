@@ -15,6 +15,7 @@ experience rather than a published practice, it says so.
 
 ## Contents
 
+- [Loop engineering](#loop-engineering)
 - [The harness: what carries work across sessions](#the-harness-what-carries-work-across-sessions)
 - [Generator and evaluator](#generator-and-evaluator)
 - [Specify before building](#specify-before-building)
@@ -27,6 +28,86 @@ experience rather than a published practice, it says so.
 - [Context discipline](#context-discipline)
 - [Exclusive resources and naming](#exclusive-resources-and-naming)
 - [Feed findings back](#feed-findings-back)
+
+## Loop engineering
+
+**Sources: `github.com/cobusgreyling/loop-engineering` (MIT) and its
+`docs/primitives.md`; Addy Osmani, *Loop engineering*.**
+
+> "You shouldn't be prompting coding agents anymore. You should be designing
+> loops that prompt your agents." — Peter Steinberger
+>
+> "I don't prompt Claude anymore. I have loops running that prompt Claude and
+> figuring out what to do. My job is to write loops." — Boris Cherny, Claude
+> Code
+
+**Loop engineering sits one floor above harness design.** The harness is the
+environment a single agent runs inside. The loop is *"the harness but it runs
+on a timer, it spawns little helpers, and it feeds itself."* Both matter; they
+are not the same layer, and this reference covers the harness in the next
+section.
+
+Osmani is also worth quoting on the caveat, because he is selling nothing:
+it is early, and *"you absolutely have to be careful about token costs."*
+
+### Five primitives, plus memory
+
+| Primitive | Job | Failure if absent | Here |
+| --- | --- | --- | --- |
+| **Automations / scheduling** | *The heartbeat.* Discovery and triage on a cadence | Without it you have a one-off run, not a loop | GitHub Actions per push; `pre-commit` running `scan`; `asyncRewake` hooks that wake the agent when a slow check fails |
+| **Worktrees** | Parallelism without merge hell | Two agents in one tree | `/work` holds sibling repos and `git worktree`s |
+| **Skills** | Persistent knowledge of *intent* | "Intent debt" — the loop re-derives everything each run | This skill |
+| **Connectors (MCP)** | Reach the tools you already use | A loop that can only read the filesystem | `gh` for issues and PRs, `adb` for the device |
+| **Sub-agents** | Maker / checker split | *"The agent that wrote the code is a terrible judge of its own work"* | Not in place — see below |
+| **Memory / state** | A durable spine outside any conversation | Every session starts blind | Not in place — see below |
+
+Properties worth designing deliberately: automations need an interval, a
+fire-immediately option, one-shot versus recurring, and durability across
+restarts. Worktrees need **cleanup** — one per attempt, swept on reject or
+escalation, or they accumulate silently.
+
+Common maker/checker splits: Explorer → Implementer → Verifier; Implementer →
+Security reviewer; Implementer → Test writer and runner. Note that a `/goal`
+stopping condition evaluated by a *fresh* model is the same idea again — the
+judge is not the maker.
+
+### What good state answers
+
+The state file is *"often the single most important artifact the loop
+produces."* It should answer three questions:
+
+- What are we currently working on?
+- What did we try last time, and what was the outcome?
+- What is waiting for a human?
+
+This is where the two independent sources converge, which is the strongest
+signal in either: loop engineering calls it `STATE.md`; Anthropic's harness
+work reaches the same conclusion from failure analysis and calls it
+`claude-progress.txt` plus a JSON feature list plus git history. As Osmani puts
+it: **the agent forgets, the repo doesn't.**
+
+### Start small, add on evidence
+
+A minimal viable loop is **scheduling + one triage skill + a state file**. Then
+add worktree isolation once changes are being made, sub-agent verification once
+it acts autonomously, and connectors once it should drive tickets rather than
+suggest. The guidance is explicit that each primitive should be added *"only
+when the previous version has proven its value (and its failure modes)."*
+
+### What is missing here, named plainly
+
+This project has automations, worktrees, skills and connectors. It lacks the
+two that matter most:
+
+- **No state file.** Every session reconstructs position from git log and
+  guesswork. This session did that repeatedly.
+- **No maker/checker split.** The agent that builds also decides whether it
+  worked — which is exactly how "registered successfully, drew nothing"
+  survived several sessions, and why a reflective call to a *notifier* was
+  reported as success.
+
+`npx @cobusgreyling/loop audit .` scores loop readiness and is a faster way to
+find these gaps than arguing about them.
 
 ## The harness: what carries work across sessions
 
