@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# Propose a change to this skill as a pull request.
+#
+#   bin/propose <type> "<claim>" [--body-file FILE] [--unverified]
+#
+#   type: finding | correction | stale | structure
+#
+# Example:
+#   bin/propose finding "Coverage does not extend until the dataset is re-registered"
+#
+# Reads the PR body from --body-file, or from stdin if it is not a terminal, or
+# opens the template pre-filled. Branches, commits, pushes, opens the PR.
+#
+# Written for agents: it fails loudly and specifically rather than doing
+# something surprising, and it never prompts interactively.
+
+set -euo pipefail
+
+die() { printf 'propose: %s\n' "$1" >&2; exit 1; }
+
+TYPE="${1:-}"
+CLAIM="${2:-}"
+shift 2 2>/dev/null || true
+
+UNVERIFIED=0
+BODY_FILE=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --body-file) BODY_FILE="${2:-}"; shift 2 ;;
+        --unverified) UNVERIFIED=1; shift ;;
+        *) die "unknown option: $1" ;;
+    esac
+done
+
+case "$TYPE" in
+    finding|correction|stale|structure) ;;
+    *) die "type must be one of: finding correction stale structure
+       finding    - a new measured fact
+       correction - something in the skill is wrong
+       stale      - a claim can no longer be verified
+       structure  - moving content, no new claims" ;;
+esac
+
+[ -n "$CLAIM" ] || die "give the claim as the second argument, stated so it could be proven false.
+       Not: \"update docs\"
+       But: \"Coverage does not extend until the dataset is re-registered\""
+
+# A title that names a file or an action is describing the diff, not the
+# finding. The whole point is that the title states what is true.
+case "$CLAIM" in
+    "update "*|"Update "*|"fix "*|"Fix "*|"docs"*|"Docs"*)
+        die "the title should state the claim, not the edit: \"$CLAIM\"" ;;
+esac
+
+cd "$(dirname "$0")/.."
+
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 \
+    || die "not a git checkout — the installed skill should be a clone of the skill repo"
+
+BRANCH_NOW=$(git rev-parse --abbrev-ref HEAD)
+[ "$BRANCH_NOW" != "main" ] || [ -n "$(git status --porcelain)" ] \
+    || die "nothing to propose: no changes in the working tree"
+
+if [ -z "$(git status --porcelain)" ]; then
+    die "nothing to propose: no changes in the working tree"
+fi
+
+command -v gh >/dev/null || die "gh is not installed; push the branch and open the PR by hand"
+
+slug=$(printf '%s' "$CLAIM" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed 's/[^a-z0-9]\+/-/g; s/^-//; s/-$//' \
+    | cut -c1-50)
+BRANCH="$TYPE/$slug"
+
+if [ "$BRANCH_NOW" = "main" ]; then
+    git checkout -q -b "$BRANCH"
+else
+    BRANCH="$BRANCH_NOW"
+    printf 'propose: already on %s, using it\n' "$BRANCH"
+fi
+
+# The body: a file, or stdin when piped, or the template as a starting point.
+BODY=""
+if [ -n "$BODY_FILE" ]; then
+    [ -f "$BODY_FILE" ] || die "no such file: $BODY_FILE"
+    BODY=$(cat "$BODY_FILE")
+elif [ ! -t 0 ]; then
+    BODY=$(cat)
+else
+    BODY=$(cat .github/pull_request_template.md 2>/dev/null || echo)
+fi
+
+case "$BODY" in
+    *"How it was measured"*|*"measured"*|*"Measured"*) ;;
+    *) die "the body must say how this was measured — commands, versions, device.
+       A claim without a method cannot be re-checked when ATAK changes.
+       Pass it with --body-file, or pipe it in." ;;
+esac
+
+git add -A
+git commit -q -m "$CLAIM
+
+$BODY"
+
+git push -q -u origin "$BRANCH"
+
+LABELS="$TYPE"
+[ "$UNVERIFIED" = "1" ] && LABELS="$TYPE,unverified"
+
+gh pr create \
+    --title "$CLAIM" \
+    --body "$BODY" \
+    --label "$LABELS" \
+    2>&1 | tail -2
+
+printf '\nProposed on %s. The skill is unchanged on main until this is reviewed.\n' "$BRANCH"

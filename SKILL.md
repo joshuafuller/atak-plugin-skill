@@ -47,40 +47,16 @@ despite the dialog mentioning software versions.
 
 ## Java or Kotlin — the template is not the answer
 
-The SDK's template is three Java files, and it is easy to read that as ATAK
-being a Java-only platform. It is not. Measured against 5.8.0.1:
+The template is three Java files; ATAK is not a Java-only platform. Its own
+`main.jar` has 4,384 Kotlin entries, `atak.apk` ships `kotlinx-coroutines` and
+`kotlin.reflect`, and the template's gradle already configures a Kotlin compile
+task if one exists. **Choose the language on its merits**; the two mix freely
+in one module.
 
-| Check | Result |
-| --- | --- |
-| Kotlin runtime in `atak.apk` | present — `kotlinx_coroutines_android`, `kotlinx_coroutines_core`, `kotlin.reflect` service loaders |
-| Kotlin in `main.jar`, the API you compile against | **4,384** entries |
-| `.kt` files in the template | none |
-| Kotlin awareness in the template's `build.gradle` | yes — it configures `compile<Flavour>ReleaseKotlin` when that task exists, and carries a `kotlinx-serialization-core` resolution strategy |
-
-So ATAK ships Kotlin, its own API surface is substantially Kotlin, and the
-SDK's build already anticipates Kotlin plugins. **Choose the language on its
-merits; do not default to Java because the template did.** Kotlin and Java
-sources mix freely in one module, so an existing Java plugin can add Kotlin
-without a rewrite.
-
-If you go Kotlin, carry this across:
-
-- **`-Xsam-conversions=class` on release builds.** The template forces it, and
-  the reason matters: Kotlin 1.5+ defaults to `indy`, compiling SAM conversions
-  as `invokedynamic`. The SDK overriding that for release only is a strong
-  signal the `indy` form does not survive proguard repackaging and ATAK's
-  plugin classloader — so it works in debug and fails once released, which is
-  the worst shape a defect can take.
-- **The plugin bundles `kotlin-stdlib` while ATAK already loads Kotlin.**
-  Version skew between the two is plausible and must be checked on device.
-- **Verify a Kotlin unit in the *release* variant on a device** before
-  committing to it. Debug proves nothing about the repackaged build.
-
-Where Kotlin pays for itself is long-running, cancellable, progress-reporting
-work — downloads, tiling, anything with a lifecycle. Structured concurrency
-prevents by construction the bug where a superseded task's callbacks keep
-driving the UI. Where it pays for nothing is primitive-array hot loops, such as
-a protobuf parser, where the two languages generate the same thing.
+One trap if you do: the SDK forces `-Xsam-conversions=class` on *release*
+Kotlin compilation, which means the default `indy` form does not survive
+proguard repackaging and ATAK's classloader — so it works in debug and fails
+once released. See `references/language.md`.
 
 ## The loop
 
@@ -161,6 +137,33 @@ Gitignore anything that matches and copy it from `$ATAK_SDK` at build time.
 | `references/shipping.md` | Preparing a Third Party Pipeline submission. |
 | `references/atak-behaviour.md` | Designing around how ATAK treats maps and imports. Explains behaviour that looks like bugs. |
 | `references/android-gotchas.md` | Anything that works on the JVM and fails on device. |
+| `references/language.md` | Choosing Java or Kotlin, and what a Kotlin plugin must carry. |
+| `references/self-improvement.md` | **The working loop, and how to correct this skill when it misleads you.** Read it the first time something here turns out to be wrong. |
+
+## When this skill is wrong, fix it before you finish
+
+Everything here was measured against one ATAK version on one machine on one
+day. Some of it is already wrong. **When the device and this skill disagree,
+the device wins and this skill is defective.**
+
+The working loop is six steps — orient (`doctor`), specify (red test), build,
+verify *on device*, record the evidence, **correct the skill**. The last step
+is the one that makes the next session cheaper, and the only one anybody skips.
+
+Correct it whenever a claim here turned out false, a diagnosis cost more than
+about half an hour, or you needed a fact that was not here. Do it as a pull
+request rather than a push — a wrong claim here is believed by every future
+session:
+
+```bash
+cd ~/.claude/skills/atak-plugin      # the installed skill is a git checkout
+# ...edit...
+bin/propose finding "Coverage does not extend until re-registration"
+```
+
+One finding per PR, measured with the method in the body, versions stated.
+`references/self-improvement.md` has the full protocol; `CONTRIBUTING.md` has
+the acceptance criteria and definition of done.
 
 ## Rules of thumb
 
