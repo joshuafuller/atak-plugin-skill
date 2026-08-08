@@ -121,6 +121,24 @@ why" is worth more than a lost observation. Label it `unverified`, say so in
 the body, and open it anyway. It will not be merged into `SKILL.md` as fact,
 but it will be there for whoever hits it next.
 
+## Licensing of what you submit
+
+By opening a pull request you agree your contribution is licensed under this
+project's MIT licence, and that you have the right to submit it.
+
+Two things are never accepted, regardless of accuracy:
+
+- **ATAK SDK material** — code, resources, gradle scripts or binaries copied
+  from the SDK. The TAK licence forbids redistributing it.
+- **Anything established by decompiling, disassembling or reverse engineering
+  ATAK.** The licence forbids it, and a finding obtained that way cannot be
+  published here even when it is correct and useful. Observed runtime
+  behaviour, logcat, file layout and archive listings are all fine — that is
+  how everything here was measured.
+
+If a finding can only be stated by describing internal, obfuscated symbols,
+it does not belong in this repository.
+
 ## What gets rejected
 
 - Advice that was not tested.

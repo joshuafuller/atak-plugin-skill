@@ -64,6 +64,11 @@ No ATAK SDK material is in this repository, and none should be added. The TAK
 licence permits deriving applications from the SDK and forbids redistributing
 it. Download your own from [tak.gov](https://tak.gov).
 
-## Licence
+## Licence and attribution
 
-MIT. See [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
+
+ATAK and TAK are products of the TAK Product Center and the U.S. Government.
+This is an independent, unofficial reference and is **not affiliated with or
+endorsed by** them. [NOTICE.md](NOTICE.md) covers that, how the claims here
+were established, and the licensing of contributions.
