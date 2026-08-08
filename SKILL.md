@@ -22,9 +22,9 @@ answered by one of them.
 | **This skill** | A measurement record, not a manual | Correct it when it misleads |
 
 **Engineer the loop, not the prompt** — triggers, worktrees, skills,
-connectors, sub-agents, and a termination condition that can actually be met.
+connectors, sub-agents, memory, and a termination condition that can be met.
 `references/agent-sdlc.md`. **Read the source before designing an experiment.**
-`MapController.zoomTo(double)` takes ATAK's map *scale*, not resolution. A
+`AtakMapController.zoomTo(double)` takes ATAK's map *scale*, not resolution. A
 plausible "30 metres per pixel" asks for something extremely zoomed in: every
 tile request misses and the map renders blank, with no error anywhere.
 `AtakMapView.mapResolutionAsMapScale()` converts — one grep each, where finding
@@ -70,13 +70,12 @@ adb logcat | grep -E "AtakPluginRegistry|PluginValidator"
 The manager's **Incompatible** almost always means signature, not API version,
 despite the dialog mentioning software versions.
 
-## Java or Kotlin — the template is not the answer
+## Java or Kotlin
 
-The template is three Java files, but ATAK is not Java-only: `main.jar` has
-4,384 Kotlin entries and the template's gradle already configures a Kotlin
-compile task. Choose on merits; the two mix in one module. One trap — the SDK
-forces `-Xsam-conversions=class` on *release* builds, so the default form
-fails only after release. See `references/language.md`.
+The template is three Java files, but ATAK ships Kotlin and its own API surface
+is substantially Kotlin, so choose on merits. One trap: the SDK forces
+`-Xsam-conversions=class` on *release* builds, because Kotlin's default
+`indy` (invokedynamic) form fails only after release. `references/language.md`.
 
 ## The loop
 

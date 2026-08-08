@@ -6,9 +6,10 @@ current framing for that is **harness design**: *"Harness design is key to
 performance at the frontier of agentic coding"* (Anthropic, *Harness design for
 long-running application development*, March 2026).
 
-Read [the harness](#the-harness-what-carries-work-across-sessions) first. The
-specification practice below it is still worth having, but the harness is what
-decides whether an agent finishes.
+Read [loop engineering](#loop-engineering) for the layering — the loop sits
+above the harness — then [the harness](#the-harness-what-carries-work-across-sessions)
+for what carries work between sessions. The specification practice below them
+is still worth having, but these two decide whether an agent finishes.
 
 Sources are named inline. Where a claim comes from this project's own
 experience rather than a published practice, it says so.
@@ -54,7 +55,7 @@ it is early, and *"you absolutely have to be careful about token costs."*
 
 | Primitive | Job | Failure if absent | Here |
 | --- | --- | --- | --- |
-| **Automations / scheduling** | *The heartbeat.* Discovery and triage on a cadence | Without it you have a one-off run, not a loop | GitHub Actions per push; `pre-commit` running `scan`; `asyncRewake` hooks that wake the agent when a slow check fails |
+| **Automations / scheduling** | *The heartbeat.* Discovery and triage on a cadence | Without it you have a one-off run, not a loop | GitHub Actions on every push. A `pre-commit` hook running `scan`, and `asyncRewake` hooks for slow checks, are available and **not yet wired up** |
 | **Worktrees** | Parallelism without merge hell | Two agents in one tree | `/work` holds sibling repos and `git worktree`s |
 | **Skills** | Persistent knowledge of *intent* | "Intent debt" — the loop re-derives everything each run | This skill |
 | **Connectors (MCP)** | Reach the tools you already use | A loop that can only read the filesystem | `gh` for issues and PRs, `adb` for the device |
@@ -125,7 +126,7 @@ happened on this project before the article was read:
 2. **Declaring victory** — a later session sees that progress exists and calls
    the job done.
 
-The remedy is two different prompts and three artifacts.
+The remedy is two different prompts and four artifacts.
 
 **An initializer agent** runs once, with a different prompt from every session
 after it, and lays down:
