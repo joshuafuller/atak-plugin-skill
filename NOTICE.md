@@ -2,7 +2,7 @@
 
 This repository is MIT licensed (see [LICENSE](LICENSE)) and contains only our
 own work: the skill documentation, a helper script for proposing changes
-(`bin/propose`), and CI configuration.
+(`scripts/propose`), and CI configuration.
 
 ## Not affiliated with the TAK Product Center
 

@@ -2,6 +2,16 @@
 
 All public in 5.8.
 
+## Contents
+
+- [Plugin entry point](#plugin-entry-point)
+- [By goal](#by-goal)
+- [Where files go on device](#where-files-go-on-device)
+- [Writing files ATAK will read](#writing-files-atak-will-read)
+- [MOBAC map source XML](#mobac-map-source-xml)
+- [Projections](#projections)
+- [Streaming tile sources (the `.json` descriptors)](#streaming-tile-sources-the-json-descriptors)
+
 ## Plugin entry point
 
 The 5.8 template implements `gov.tak.api.plugin.IPlugin`, takes an

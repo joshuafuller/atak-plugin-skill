@@ -1,7 +1,6 @@
 ---
 name: atak-plugin
 description: Use when building, debugging, testing, or shipping an ATAK (Android Team Awareness Kit) plugin - scaffolding from the SDK template, getting it to actually load on a device, running instrumented tests inside ATAK, and preparing a submission to TAK's third-party signing pipeline. Triggers on ATAK plugin work, "plugin will NOT load", "signature mismatch", plugin manager Incompatible, takdev, plugintemplate, or connectedAndroidTest hanging.
-trigger: /atak-plugin
 ---
 
 # ATAK plugin development
@@ -134,7 +133,7 @@ request, not a push — a wrong claim here is believed by every future session:
 
 ```bash
 cd ~/.claude/skills/atak-plugin      # the installed skill is a git checkout
-bin/propose finding "Coverage does not extend until re-registration"
+scripts/propose finding "Coverage does not extend until re-registration"
 ```
 
 One finding per PR, measured, method in the body.
