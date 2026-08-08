@@ -1,12 +1,13 @@
 # Licensing and attribution
 
-This repository is MIT licensed (see [LICENSE](LICENSE)) and contains only
-documentation we wrote.
+This repository is MIT licensed (see [LICENSE](LICENSE)) and contains only our
+own work: the skill documentation, a helper script for proposing changes
+(`bin/propose`), and CI configuration.
 
 ## Not affiliated with the TAK Product Center
 
-ATAK, TAK, and the Android Team Awareness Kit are products of, and their names
-are used by, the TAK Product Center and the U.S. Government. This is an
+ATAK, TAK, and the Android Team Awareness Kit are products of the TAK Product
+Center and the U.S. Government, and those names are their marks. This is an
 independent, unofficial reference. It is **not affiliated with, endorsed,
 sponsored or approved by** the TAK Product Center, the U.S. Army Combat
 Capabilities Development Command, or any part of the U.S. Government. Those
@@ -19,8 +20,10 @@ from the SDK and forbids copying, publishing or distributing the SDK itself.
 Nothing here is copied from it: no code, no resources, no gradle scripts, no
 binaries. Get the SDK yourself from <https://tak.gov>.
 
-CI enforces this — a pull request adding a binary artifact or an SDK-named path
-fails.
+CI helps, but does not prove it. The workflow rejects committed binaries and
+archives and a list of known SDK filenames; it cannot recognise an SDK text
+file that has been renamed. It is a backstop against the common mistake, not a
+guarantee.
 
 ## How the claims here were established
 
