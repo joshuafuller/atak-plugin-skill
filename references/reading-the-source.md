@@ -1,9 +1,19 @@
 # Read the source
 
-ATAK-CIV is published under **GPL-3.0** at <https://tak.gov> as
-`atak-civ-client` — roughly 4,200 Java files, including the whole map engine.
-Almost every question about how ATAK behaves is answered there in less time
-than it takes to design an experiment.
+ATAK-CIV's source is published under **GPL-3.0** — roughly 4,200 Java files,
+including the whole map engine. Almost every question about how ATAK behaves is
+answered there in less time than it takes to design an experiment.
+
+Two places, and the difference matters when a claim is version-specific:
+
+| Source | What you get |
+| --- | --- |
+| <https://tak.gov>, as `atak-civ-client` | The current release, if your account has sufficient permissions |
+| <https://github.com/TAK-Product-Center/atak-civ> | A public mirror, released on a delay |
+
+If a behaviour does not match what you read, check which of the two you have
+and against which ATAK build — the delayed mirror can lag the binary you are
+testing against.
 
 This should be the first move, not the last.
 

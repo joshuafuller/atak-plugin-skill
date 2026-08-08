@@ -11,8 +11,9 @@ Re-verify version-specific claims on a different ATAK release.
 
 ## Read the source first
 
-ATAK-CIV is published under GPL-3.0 as `atak-civ-client` — ~4,200 Java files,
-the whole map engine. Most questions about its behaviour are a `grep` away, and
+ATAK-CIV's source is published under GPL-3.0 — ~4,200 Java files, the whole map
+engine — on tak.gov with a permissioned account, and publicly on a delay at
+`github.com/TAK-Product-Center/atak-civ`. Most questions about its behaviour are a `grep` away, and
 answering them by experiment instead routinely costs hours.
 
 The example that earns this its place: `MapController.zoomTo(double)` takes map
