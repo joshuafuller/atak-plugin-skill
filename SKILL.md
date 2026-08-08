@@ -11,8 +11,8 @@ Re-verify version-specific claims on a different ATAK release.
 
 ## What you have
 
-Know the tools before reaching for an experiment. Most questions here are
-already answered by one of these.
+Know these before reaching for an experiment; most questions are already
+answered by one of them.
 
 | | What it is | Use it for |
 | --- | --- | --- |
@@ -29,11 +29,11 @@ tile request misses and the map renders blank with no error anywhere.
 `AtakMapView.mapResolutionAsMapScale()` converts. Both facts are one grep each;
 finding them by experiment cost hours.
 
-**What you may do:** read the GPL-3.0 source, run ATAK and observe it, list
-archive entries, reflect at runtime over loaded classes, and ship plugins
-derived from the SDK. **What you may not:** decompile or disassemble the APK,
-SDK jars or AARs, or republish SDK files. `references/licensing.md` quotes the
-text and links every copy of it.
+**Permitted:** reading the GPL-3.0 source, observing ATAK at runtime, listing
+archive entries, reflection over loaded classes, shipping plugins derived from
+the SDK. **Not permitted:** decompiling or disassembling the APK, SDK jars or
+AARs; republishing SDK files. `references/licensing.md` quotes both licences
+and links every copy.
 
 ## Four facts that cost the most time
 
