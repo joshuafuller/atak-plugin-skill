@@ -1,5 +1,10 @@
 # Build environment, and the two things that hang
 
+The tooling this skill assumes — a pinned toolchain, `doctor`, `deploy`,
+`instrument`, and an `AGENTS.md` describing how to run the whole loop without a
+human — lives in <https://github.com/joshuafuller/atak-plugin-dev>.
+**This skill carries the knowledge; that repo carries the tools.**
+
 ## Contents
 
 - [What a build needs](#what-a-build-needs)

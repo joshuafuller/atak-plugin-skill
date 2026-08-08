@@ -17,7 +17,7 @@ answered by one of them.
 | --- | --- | --- |
 | **The published source** | ATAK-CIV under GPL-3.0, ~4,200 Java files including the map engine. tak.gov (current, permissioned) or `github.com/TAK-Product-Center/atak-civ` (public, delayed) | **Read this first.** Exact signatures and, more importantly, what they mean |
 | **The SDK** | `atak.apk`, keystore, `main.jar`, espresso, samples. Licensed, mounted at `$ATAK_SDK`, never committed | Building, and the developer ATAK that will load your plugin |
-| **The dev container** | `doctor`, `deploy`, `instrument` on `PATH` | Run `doctor` first, always |
+| **The dev container** | `github.com/joshuafuller/atak-plugin-dev` — pinned toolchain, `doctor`, `deploy`, `instrument` on `PATH`, and an `AGENTS.md` for unattended runs | Run `doctor` first, always. The tooling lives there, not here |
 | **An emulator** | `google_apis` image — never `aosp_atd` | Everything, unattended |
 | **This skill** | A measurement record, not a manual | Correct it when it misleads you |
 
