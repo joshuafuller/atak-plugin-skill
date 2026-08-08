@@ -40,15 +40,13 @@ and links every copy.
 Each produces a failure that looks like something else.
 
 1. **ATAK compares a plugin's signing certificate against its own.** A plugin
-   signed with the SDK's keystore will not load into the release ATAK. Install
-   `$ATAK_SDK/atak.apk` — same version, same key, red `DEVELOPER BUILD`
-   watermark. The manager says "Incompatible", which sounds like a version
-   problem and is not.
-2. **Installing the APK is not enough.** It becomes visible to the plugin
-   manager only when a copy is in `/sdcard/atak/support/apks/sideloaded/`
-   **and** you run Sync Packages.
-3. **Loading is separate from installing.** After syncing the row says
-   `Not loaded`; tap it and choose **Load**.
+   signed with the SDK's keystore will not load into the release ATAK; install
+   `$ATAK_SDK/atak.apk` instead. The manager says "Incompatible", which sounds
+   like a version problem and is not.
+2. **Installing the APK is not enough.** It is visible to the plugin manager
+   only with a copy in `/sdcard/atak/support/apks/sideloaded/` **and** a sync.
+3. **Loading is separate from installing.** After syncing, tap the row and
+   choose **Load**.
 4. **The `com.atakmap.app.component` activity makes the plugin discoverable.**
    Remove it and the plugin is invisible, with no error.
 
