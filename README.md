@@ -1,5 +1,7 @@
 # ATAK plugin skill
 
+[![checks](https://github.com/joshuafuller/atak-plugin-skill/actions/workflows/checks.yml/badge.svg)](https://github.com/joshuafuller/atak-plugin-skill/actions/workflows/checks.yml)
+
 A [Claude](https://claude.ai/code) skill for building ATAK plugins — scaffolding
 from the SDK template, getting one to actually load on a device, running
 instrumented tests inside ATAK, and preparing a Third Party Pipeline
